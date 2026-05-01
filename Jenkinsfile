@@ -92,7 +92,6 @@ pipeline {
             agent any
             steps {
                 unstash 'version'
-                unstash 'build'
                 sh '''
                     mkdir -p artifacts
                     cp version.json artifacts/
