@@ -22,6 +22,7 @@ pipeline {
             agent {
                 docker {
                     image 'mcr.microsoft.com/dotnet/sdk:6.0'
+                    args '-u root:root -v /tmp:/tmp'
                 }
             }
             steps {
@@ -37,7 +38,7 @@ pipeline {
                 '''
             }
     }
-    
+
         // Stage 3: Run database test (spins up PostgreSQL)
                 // Stage 3: Run database test (spins up PostgreSQL)
         stage('Test Database') {
