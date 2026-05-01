@@ -41,23 +41,42 @@ pipeline {
             }
         }
         // Stage 3: Run database test (spins up PostgreSQL)
+                // Stage 3: Run database test (spins up PostgreSQL)
         stage('Test Database') {
             agent any  // runs on Jenkins master
             steps {
                 script {
-                    // Start PostgreSQL container
+                    // Start PostgreSQL container with password
                     sh '''
                         docker run -d --name test-db \
-                            -e POSTGRES_PASSWORD=test \
+                            -e POSTGRES_PASSWORD=test123 \
+                            -e POSTGRES_USER=testuser \
+                            -e POSTGRES_DB=testdb \
                             -p 5432:5432 \
                             postgres:13
                         sleep 5
                     '''
                     
-                    // Test connection from another container
+                    // Test connection with username and password
                     sh '''
                         docker run --rm --network host \
-                            postgres:13 psql -h localhost -U postgres -c "SELECT version();"
+                            -e PGPASSWORD=test123 \
+                            postgres:13 psql -h localhost -U testuser -d testdb -c "SELECT version();"
+                    '''
+                    
+                    // Create a test table
+                    sh '''
+                        docker run --rm --network host \
+                            -e PGPASSWORD=test123 \
+                            postgres:13 psql -h localhost -U testuser -d testdb -c "
+                                CREATE TABLE test_table (
+                                    id SERIAL PRIMARY KEY,
+                                    name VARCHAR(100),
+                                    created_at TIMESTAMP DEFAULT NOW()
+                                );
+                                INSERT INTO test_table (name) VALUES ('test1'), ('test2');
+                                SELECT * FROM test_table;
+                            "
                     '''
                 }
             }
