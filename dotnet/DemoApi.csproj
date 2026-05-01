@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <Import Project="Version.props" />
+  <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.0" />
+</Project>
