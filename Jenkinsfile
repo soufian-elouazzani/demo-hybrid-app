@@ -18,25 +18,28 @@ pipeline {
             }
         }
         
-        // Stage 2: Build .NET API (uses .NET container)
-        stage('Build .NET API') {
+	stage('Simulate Delphi Build') {
             agent {
                 docker {
-                    image 'mcr.microsoft.com/dotnet/sdk:6.0'
+                    image 'alpine:latest'
                 }
             }
             steps {
-                unstash 'version'
                 sh '''
-                    mkdir -p src
-                    echo 'Console.WriteLine("Hello from .NET");' > src/Program.cs
-                    dotnet new console -n MyApp -o src
-                    cd src && dotnet build
+                    echo "========================================="
+                    echo "SIMULATING DELPHI BUILD"
+                    echo "In real company: Windows container would run here"
+                    echo "MSBuild would compile .dproj file"
+                    echo "========================================="
+                    
+                    # Create fake Delphi output
+                    mkdir -p delphi-output
+                    echo "DelphiApp.exe (simulated)" > delphi-output/README.txt
+                    echo "build: ${BUILD_NUMBER}" >> delphi-output/README.txt
                 '''
-                stash name: 'build', includes: 'src/**/*'
+                stash name: 'delphi', includes: 'delphi-output/**/*'
             }
         }
-        
         // Stage 3: Run database test (spins up PostgreSQL)
         stage('Test Database') {
             agent any  // runs on Jenkins master
