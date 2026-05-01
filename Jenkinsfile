@@ -1,6 +1,6 @@
 pipeline {
     // No global agent - each stage defines its own container
-    
+    agent  none 
     stages {
         // Stage 1: Generate version (uses tiny alpine container)
         stage('Generate Version') {
