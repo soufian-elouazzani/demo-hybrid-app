@@ -18,28 +18,26 @@ pipeline {
             }
         }
         
-	stage('Simulate Delphi Build') {
+	stage('Build .NET API') {
             agent {
                 docker {
-                    image 'alpine:latest'
+                    image 'mcr.microsoft.com/dotnet/sdk:6.0'
                 }
             }
             steps {
                 sh '''
-                    echo "========================================="
-                    echo "SIMULATING DELPHI BUILD"
-                    echo "In real company: Windows container would run here"
-                    echo "MSBuild would compile .dproj file"
-                    echo "========================================="
-                    
-                    # Create fake Delphi output
-                    mkdir -p delphi-output
-                    echo "DelphiApp.exe (simulated)" > delphi-output/README.txt
-                    echo "build: ${BUILD_NUMBER}" >> delphi-output/README.txt
+                    echo "Building .NET app for build ${BUILD_NUMBER}"
+                    mkdir -p MyApp
+                    cd MyApp
+                    dotnet new console -n MyConsoleApp
+                    cd MyConsoleApp
+                    dotnet build
+                    echo "Build successful!"
+                    ls -la
                 '''
-                stash name: 'delphi', includes: 'delphi-output/**/*'
             }
-        }
+    }
+    
         // Stage 3: Run database test (spins up PostgreSQL)
                 // Stage 3: Run database test (spins up PostgreSQL)
         stage('Test Database') {
