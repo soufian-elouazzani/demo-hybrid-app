@@ -169,6 +169,7 @@ EOF
     }
     
     post {
+        agent any
         always {
             echo "Pipeline finished for build ${BUILD_NUMBER}"
             cleanWs()
